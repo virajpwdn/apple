@@ -1,0 +1,87 @@
+// This component will switch models of mac 14" & 16"
+
+import { PresentationControls } from "@react-three/drei";
+import { useRef } from "react";
+import { MacbookPro16 } from "../models/Macbook-16";
+import MacbookModel14 from "../models/Macbook-14";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+
+const ANIMATION_DURATION = 1;
+const OFFSET_DISTANCE = 5;
+
+const fadeMeshes = (group, opacity) => {
+  if (!group) return;
+  group.traverse((child) => {
+    console.log("FADEMESHES_FN", child);
+    if (child.isMesh) {
+      child.material.transparent = true;
+      gsap.to(child.material, {
+        opacity,
+        duration: ANIMATION_DURATION,
+      });
+    }
+  });
+};
+
+const moveGroup = (group, x) => {
+  if (!group) return;
+  console.log("MOVEGROUP_FN -> ", group);
+
+  gsap.to(group.position, { x, duration: ANIMATION_DURATION });
+};
+
+interface ModelSwitcherProps {
+    scale: number,
+    isMobile: boolean
+}
+
+const ModelSwitcher = ({ scale, isMobile }: ModelSwitcherProps) => {
+  const SCALE_LAGE_DESKTOP = 0.08;
+  const SCALE_LARGE_MOBILE = 0.05;
+  const smallMacbookRef = useRef(null);
+  const largeMacbookRef = useRef(null);
+
+  const showLargeMacbook = scale === SCALE_LAGE_DESKTOP || scale === SCALE_LARGE_MOBILE;
+
+  const controlsConfig = {
+    snap: true, // brings back the model to center
+    speed: 1,
+    zoom: 1,
+    azimuth: [-Infinity, Infinity], // for infinite x axis rotation
+    config: { mass: 1, tension: 0, friction: 26 }, // real world physics
+    polar: [-Math.PI, Math.PI], // for bottom rotation
+  };
+
+  useGSAP(() => {
+    if (showLargeMacbook) {
+      moveGroup(smallMacbookRef.current, -OFFSET_DISTANCE);
+      moveGroup(largeMacbookRef.current, 0);
+
+      fadeMeshes(smallMacbookRef.current, 0);
+      fadeMeshes(largeMacbookRef.current, 1);
+    } else {
+      moveGroup(smallMacbookRef.current, 0);
+      moveGroup(largeMacbookRef.current, OFFSET_DISTANCE);
+
+      fadeMeshes(smallMacbookRef.current, 1);
+      fadeMeshes(largeMacbookRef.current, 0);
+    }
+  }, [scale]);
+  return (
+    <>
+      <PresentationControls {...controlsConfig}>
+        <group ref={largeMacbookRef}>
+          <MacbookPro16 scale={isMobile ? 0.05 : 0.08} />
+        </group>
+      </PresentationControls>
+
+      <PresentationControls {...controlsConfig}>
+        <group ref={smallMacbookRef}>
+          <MacbookModel14 scale={isMobile ? 0.03 : 0.06} />
+        </group>
+      </PresentationControls>
+    </>
+  );
+};
+export default ModelSwitcher;

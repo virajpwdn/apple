@@ -1,7 +1,11 @@
 import Hero from "./components/Hero";
 import Navbar from "./components/Navbar";
 import ProductViewer from "./components/ProductViewer";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/all";
 
+// Registering gsap plugin here so that it will be globally accessible
+gsap.registerPlugin(ScrollTrigger);
 const App = () => {
   return (
     <div>
