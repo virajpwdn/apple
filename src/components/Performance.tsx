@@ -1,48 +1,76 @@
-import { performanceImages } from "../constants/navbar-links";
+import {
+  performanceImages,
+  performanceImgPositions,
+} from "../constants/navbar-links";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { useRef } from "react";
+import { useMediaQuery } from "react-responsive";
 
 const Performance = () => {
-  const timeline = gsap.timeline({
-    scrollTrigger: {
-      trigger: "#performance",
-      start: "top top",
-      end: "bottom top",
-      scrub: 1,
-      markers: true
-    },
-  });
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const isMobile = useMediaQuery({ query: "(max-width: 1024px)" });
 
-  useGSAP(() => {
-    timeline.to(".wrapper img", {
-      x: -100,
-      opacity: 0.8,
-      stagger: 0.1,
-      ease: "power2.inOut"
-    });
-  });
+  useGSAP(
+    () => {
+      if (!sectionRef.current) return;
+      gsap.fromTo(
+        ".content p",
+        { opacity: 0, y: 10 },
+        {
+          opacity: 1,
+          y: 0,
+          ease: "power1.out",
+          scrollTrigger: {
+            trigger: ".content p",
+            start: "top bottom",
+            end: "top center",
+            scrub: true,
+            // markers: true,
+          },
+        }
+      );
+
+    //   if (isMobile) return;
+
+      //Image positioning timeline
+      const tl = gsap.timeline({
+        defaults: { duration: 2, ease: "power1.inOut", overwrite: "auto" },
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1,
+          invalidateOnRefresh: true,
+        //   markers: true,
+        },
+      });
+
+      performanceImgPositions.forEach((item) => {
+        if (item.id === "p5") return;
+
+        const selector = `.${item.id}`;
+        const vars = {};
+
+        if (typeof item.left === "number") vars.left = `${item.left}%`;
+        if (typeof item.right === "number") vars.right = `${item.right}%`;
+        if (typeof item.bottom === "number") vars.bottom = `${item.bottom}%`;
+
+        console.log("OBJECT VARS -> ", vars);
+
+        tl.to(selector, vars, 0);
+      });
+    },
+    { scope: sectionRef, dependencies: [isMobile] }
+  );
   return (
-    <div id="performance" className="">
+    <div ref={sectionRef} id="performance">
       <h2>Next-level graphics performance. Game on.</h2>
 
       <div className="wrapper">
-        {performanceImages.map(({ id, src }) => {
-          return id !== "p5" ? (
-            <img
-              key={id}
-              src={src}
-              alt={id}
-              className={id}
-            />
-          ) : (
-            <img
-              key={id}
-              src={src}
-              alt={id}
-              className={`p5`}
-            />
-          );
-        })}
+        {performanceImages.map(({ id, src }) => (
+          <img key={id} src={src} alt={id} className={id} />
+        ))}
       </div>
 
       <div className="content">
@@ -56,7 +84,7 @@ const Performance = () => {
           </span>{" "}
           And Dynamic Caching optimizes fast on-chip memory to dramatically
           increase average GPU utilization — driving a huge performance boost
-          for the most demanding pro apps and games.
+          for the most demanding pro apps and games.
         </p>
       </div>
     </div>
