@@ -31,7 +31,7 @@ const Performance = () => {
         }
       );
 
-    //   if (isMobile) return;
+      //   if (isMobile) return;
 
       //Image positioning timeline
       const tl = gsap.timeline({
@@ -42,7 +42,7 @@ const Performance = () => {
           end: "bottom top",
           scrub: 1,
           invalidateOnRefresh: true,
-        //   markers: true,
+          //   markers: true,
         },
       });
 
@@ -55,8 +55,6 @@ const Performance = () => {
         if (typeof item.left === "number") vars.left = `${item.left}%`;
         if (typeof item.right === "number") vars.right = `${item.right}%`;
         if (typeof item.bottom === "number") vars.bottom = `${item.bottom}%`;
-
-        console.log("OBJECT VARS -> ", vars);
 
         tl.to(selector, vars, 0);
       });

@@ -13,7 +13,6 @@ const OFFSET_DISTANCE = 5;
 const fadeMeshes = (group, opacity) => {
   if (!group) return;
   group.traverse((child) => {
-    console.log("FADEMESHES_FN", child);
     if (child.isMesh) {
       child.material.transparent = true;
       gsap.to(child.material, {
@@ -26,7 +25,6 @@ const fadeMeshes = (group, opacity) => {
 
 const moveGroup = (group, x) => {
   if (!group) return;
-  console.log("MOVEGROUP_FN -> ", group);
 
   gsap.to(group.position, { x, duration: ANIMATION_DURATION });
 };
