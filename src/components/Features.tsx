@@ -9,9 +9,10 @@ import { useMediaQuery } from "react-responsive";
 import useMacbookStore from "../store";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { Group } from "three";
 
 const ModelScroll = () => {
-  const groupRef = useRef(null);
+  const groupRef = useRef<Group | null>(null);
   const isMobile = useMediaQuery({ query: "(max-width: 1024px)" });
   const { setTexture } = useMacbookStore();
 

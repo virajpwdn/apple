@@ -50,7 +50,7 @@ const Performance = () => {
         if (item.id === "p5") return;
 
         const selector = `.${item.id}`;
-        const vars = {};
+        const vars: Record<string, string> = {};
 
         if (typeof item.left === "number") vars.left = `${item.left}%`;
         if (typeof item.right === "number") vars.right = `${item.right}%`;
